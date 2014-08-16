@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Dropbox Client for ImageJ by Atin007</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Dropbox Client for ImageJ</h1>
+        <h2>Google Summer of Code 2014 - International Neuroinformatics Coordinating Facility (INCF, Belgian Node)</h2>
+        <a href="https://github.com/Atin007/dbclient" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <p><img src="https://dl.dropboxusercontent.com/u/52328771/Atin%20GSoC%20proposal/GSoC-incf-2014.png" alt=""></p>
+
+<h1>
+<a name="dropbox-client-for-imagej" class="anchor" href="#dropbox-client-for-imagej"><span class="octicon octicon-link"></span></a><a href="https://www.google-melange.com/gsoc/project/details/google/gsoc2014/atin007/5685265389584384">Dropbox Client for ImageJ</a>
+</h1>
+
+<p>**This project is sponsored by Google Inc. as a part of Google Summer of Code 2014 program. **</p>
+
+<p>Details of this project are:</p>
+
+<ol>
+<li>
+<strong>Organization:</strong>    <a href="http://incf.org">International Neuroinformatics Coordinating Facility (INCF)</a>
+</li>
+<li>
+<strong>Mentor:</strong>  Dimiter Prodanov, <a href="http://www.neuroinformatics.be">INCF Belgian Node</a>
+</li>
+<li>
+<strong>Student Developer:</strong>   Atin Mathur (<a href="mailto:mathuratin007@gmail.com">mathuratin007@gmail.com</a>)</li>
+<li>
+<strong>Working Period:</strong>  May - August, 2014</li>
+<li>
+<strong>Public Repository:</strong>   <a href="http://github.com/INCF/dbclient">http://github.com/INCF/dbclient</a>
+</li>
+</ol><h2>
+<a name="imagej" class="anchor" href="#imagej"><span class="octicon octicon-link"></span></a><a href="http://imagej.nih.gov/ij/">ImageJ</a>
+</h2>
+
+<p><img src="https://dl.dropboxusercontent.com/u/52328771/Atin%20GSoC%20proposal/imageJ.jpg" alt=""></p>
+
+<p>ImageJ is a public domain Java image processing program inspired by NIH Image for the Macintosh. It runs, either as an online applet or as a downloadable application, on any computer with a Java 1.4 or later virtual machine. <a href="http://rsbweb.nih.gov/ij/download.html">Downloadable distributions</a> are available for Windows, Mac OS, Mac OS X and Linux.</p>
+
+<p>It can display, edit, analyze, process, save and print 8-bit, 16-bit and 32-bit images. It can read many image formats including TIFF, GIF, JPEG, BMP, DICOM, FITS and "raw". It supports "stacks", a series of images that share a single window. It is multithreaded, so time-consuming operations such as image file reading can be performed in parallel with other operations.</p>
+
+<p>ImageJ was designed with an open architecture that provides extensibility via Java plugins. Custom acquisition, analysis and processing plugins can be developed using ImageJ's built in editor and Java compiler. User-written plugins make it possible to solve almost any image processing or analysis problem. It is now being used in vast number of imaging applications ranging from skin analysis to neuroscience.</p>
+
+<h2>
+<a name="project-proposal" class="anchor" href="#project-proposal"><span class="octicon octicon-link"></span></a>Project Proposal</h2>
+
+<p>Our project aims at developing an ImageJ plugin which will provide users with a Graphical user interface (GUI) to upload and download datasets (images, docs, folders, codes etc.) from their Dropbox accounts (using Dropbox Core APIs for Java) and open it directly into ImageJ. My project Proposal can be found <a href="https://dl.dropboxusercontent.com/u/52328771/Atin%20GSoC%20proposal/Atin%20Mathur_gsoc_incf-proposal.pdf">here</a>.</p>
+
+<h2>
+<a name="project-milestones" class="anchor" href="#project-milestones"><span class="octicon octicon-link"></span></a>Project Milestones</h2>
+
+<p><strong>In this section, I will describe how I developed this project.</strong></p>
+
+<h3>
+<a name="step-1-----read-dropbox-core-apis-for-java--and-imagej-basics-week-1" class="anchor" href="#step-1-----read-dropbox-core-apis-for-java--and-imagej-basics-week-1"><span class="octicon octicon-link"></span></a>Step 1  :   Read Dropbox Core APIs for Java  and ImageJ Basics. (Week 1)</h3>
+
+<p>The Dropbox Core APIs provides a flexible way to read and write to Dropbox. It includes support for advanced functionality like search, revisions, and restoring files. The Core API is based on HTTP and OAuth and provides low-level calls to access and manipulate a user's Dropbox account.</p>
+
+<p>To make things as easy as possible, dropbox has provided several platform SDKs which can be imported into any development  environment. The SDKs contain platform-specific libraries that wrap the raw HTTP calls to the Dropbox API.</p>
+
+<p>I read the complete documentation of Dropbox Core APIs from <a href="http://dropbox.github.io/dropbox-sdk-java/api-docs/v1.7.x/com/dropbox/core/DbxClient.html">here</a>. It is quite simple and informative.</p>
+
+<h3>
+<a name="step-2-----wrote-a-sample-program-to-use-dropbox-api-to-accessuploaddownload-from-my-dropbox-account-week-1" class="anchor" href="#step-2-----wrote-a-sample-program-to-use-dropbox-api-to-accessuploaddownload-from-my-dropbox-account-week-1"><span class="octicon octicon-link"></span></a>Step 2  :   Wrote a sample program to use Dropbox API to access/upload/download from my Dropbox account. (Week 1)</h3>
+
+<h3>
+<a name="step-3-----configured-imagej-with-eclipse-and-created-a-plugin-that-could-connect-to-a-users-dropbox-account-week-2" class="anchor" href="#step-3-----configured-imagej-with-eclipse-and-created-a-plugin-that-could-connect-to-a-users-dropbox-account-week-2"><span class="octicon octicon-link"></span></a>Step 3  :   Configured ImageJ with Eclipse and created a plugin that could connect to a user's Dropbox account. (Week 2)</h3>
+
+<h3>
+<a name="step-4-----added-the-downloadupload-functionality-in-the-imagej-plugin-week-3-4" class="anchor" href="#step-4-----added-the-downloadupload-functionality-in-the-imagej-plugin-week-3-4"><span class="octicon octicon-link"></span></a>Step 4  :   Added the download/upload functionality in the ImageJ plugin. (Week 3, 4)</h3>
+
+<h3>
+<a name="step-5-----improved-the-graphical-user-interface-of-the-plugin-week-5-6" class="anchor" href="#step-5-----improved-the-graphical-user-interface-of-the-plugin-week-5-6"><span class="octicon octicon-link"></span></a>Step 5  :   Improved the Graphical User Interface of the plugin. (Week 5, 6)</h3>
+
+<h4>
+<a name="midterm-evaluation" class="anchor" href="#midterm-evaluation"><span class="octicon octicon-link"></span></a>Midterm Evaluation</h4>
+
+<h3>
+<a name="step-6-----added-jtree-for-browsing-dropbox-folders-remotely-week-8-9" class="anchor" href="#step-6-----added-jtree-for-browsing-dropbox-folders-remotely-week-8-9"><span class="octicon octicon-link"></span></a>Step 6  :   Added JTree for browsing Dropbox folders remotely. (Week 8, 9)</h3>
+
+<h3>
+<a name="step-7------changed-the-gui-quite-a-bit-and-added-the-open-the-file-after-uploaddownload-functionality-week-10" class="anchor" href="#step-7------changed-the-gui-quite-a-bit-and-added-the-open-the-file-after-uploaddownload-functionality-week-10"><span class="octicon octicon-link"></span></a>Step 7  :    Changed the GUI quite a bit and added the open the file after upload/download functionality. (Week 10)</h3>
+
+<h3>
+<a name="step-8-----testing-the-code-and-handling-exceptions-wherever-needed-week-11-12" class="anchor" href="#step-8-----testing-the-code-and-handling-exceptions-wherever-needed-week-11-12"><span class="octicon octicon-link"></span></a>Step 8  :   Testing the code and handling exceptions wherever needed. (Week 11, 12)</h3>
+
+<h3>
+<a name="step-9-----changed-the-open-in-os-default-application-to-imagej-and-created-a-new-thread-for-downloadinguploading-week-13" class="anchor" href="#step-9-----changed-the-open-in-os-default-application-to-imagej-and-created-a-new-thread-for-downloadinguploading-week-13"><span class="octicon octicon-link"></span></a>Step 9  :   Changed the open in OS-Default application to ImageJ and Created a new thread for downloading/uploading. (Week 13)</h3>
+
+<h2>
+<a name="how-to-use-this-plugin" class="anchor" href="#how-to-use-this-plugin"><span class="octicon octicon-link"></span></a>How to use this plugin</h2>
+
+<h2>
+<a name="project-directory-structure" class="anchor" href="#project-directory-structure"><span class="octicon octicon-link"></span></a>Project Directory Structure</h2>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Atin007/dbclient/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Atin007/dbclient/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Atin007/dbclient"></a> is maintained by <a href="https://github.com/Atin007">Atin007</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
