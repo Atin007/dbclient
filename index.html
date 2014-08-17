@@ -34,7 +34,7 @@
 <a name="dropbox-client-for-imagej" class="anchor" href="#dropbox-client-for-imagej"><span class="octicon octicon-link"></span></a><a href="https://www.google-melange.com/gsoc/project/details/google/gsoc2014/atin007/5685265389584384">Dropbox Client for ImageJ</a>
 </h1>
 
-<p>**This project is sponsored by Google Inc. as a part of Google Summer of Code 2014 program. **</p>
+<p><strong>This project is sponsored by Google Inc. as a part of Google Summer of Code 2014 program.</strong></p>
 
 <p>Details of this project are:</p>
 
@@ -46,7 +46,7 @@
 <strong>Mentor:</strong>  Dimiter Prodanov, <a href="http://www.neuroinformatics.be">INCF Belgian Node</a>
 </li>
 <li>
-<strong>Student Developer:</strong>   Atin Mathur (<a href="mailto:mathuratin007@gmail.com">mathuratin007@gmail.com</a>)</li>
+<strong>Student Developer:</strong>   <a href="https://www.linkedin.com/in/atinmathur10">Atin Mathur</a> (<a href="mailto:mathuratin007@gmail.com">mathuratin007@gmail.com</a>)</li>
 <li>
 <strong>Working Period:</strong>  May - August, 2014</li>
 <li>
@@ -84,37 +84,210 @@
 <p>I read the complete documentation of Dropbox Core APIs from <a href="http://dropbox.github.io/dropbox-sdk-java/api-docs/v1.7.x/com/dropbox/core/DbxClient.html">here</a>. It is quite simple and informative.</p>
 
 <h3>
-<a name="step-2-----wrote-a-sample-program-to-use-dropbox-api-to-accessuploaddownload-from-my-dropbox-account-week-1" class="anchor" href="#step-2-----wrote-a-sample-program-to-use-dropbox-api-to-accessuploaddownload-from-my-dropbox-account-week-1"><span class="octicon octicon-link"></span></a>Step 2  :   Wrote a sample program to use Dropbox API to access/upload/download from my Dropbox account. (Week 1)</h3>
+<a name="step-2-----wrote-a-sample-program-to-use-dropbox-api-to-accessuploaddownload-from-my-dropbox-account-week-2" class="anchor" href="#step-2-----wrote-a-sample-program-to-use-dropbox-api-to-accessuploaddownload-from-my-dropbox-account-week-2"><span class="octicon octicon-link"></span></a>Step 2  :   Wrote a sample program to use Dropbox API to access/upload/download from my Dropbox account. (Week 2)</h3>
+
+<p><strong>Steps</strong></p>
+
+<ol>
+<li><p>First, I registered a new Dropbox API app in the <a href="https://www.dropbox.com/developers/apps">App Console</a> (We'll need the app key to access the Core API).</p></li>
+<li><p>After that, I installed the <a href="https://www.dropbox.com/developers/core/sdks/java">Java SDK</a>.</p></li>
+<li><p>Next, I installed <a href="http://www.eclipse.org/downloads/packages/eclipse-ide-java-developers/keplersr1">Eclipse for Java</a> for plugin development. </p></li>
+<li><p>Then, I created a test project and added the following code.</p></li>
+</ol><pre><code>// Include the Dropbox SDK.
+import com.dropbox.core.* ; 
+import java.io.*;
+import java.util.Locale;
+
+public class testDropbox {
+    public static void main(String[] args) throws IOException, DbxException {
+
+        //  Get your APP Key and Secret from the Dropbox developers website.
+        final String APP_KEY = "Insert &lt;APP_KEY&gt; here";
+        final String APP_SECRET = "Insert &lt;APP_SECRET&gt; here";
+
+        DbxAppInfo appInfo = new DbxAppInfo(APP_KEY, APP_SECRET);
+
+        DbxRequestConfig config = new DbxRequestConfig("JavaTutorial/1.0", Locale.getDefault().toString());
+        DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
+
+        //  Have the user sign in and authorize your APP .
+        String authorizeUrl = webAuth.start();
+        System.out.println("1. Go to: " + authorizeUrl);
+        System.out.println("2. Click \"Allow\" (you might have to log in first)");
+        System.out.println("3. Copy the authorization code.");
+        String code = new BufferedReader(new InputStreamReader(System.in)).readLine().trim();
+
+        //  This will fail if the user enters an invalid authorization code.
+        DbxAuthFinish authFinish = webAuth.finish(code);
+        String accessToken = authFinish.accessToken;
+
+        DbxClient client = new DbxClient(config, accessToken);
+
+        //  Message will be displayed after successful connection with &lt;Dropbox_Username&gt;
+        System.out.println("Linked account: " + client.getAccountInfo().displayName);
+
+        //  Upload a file from your local machine to dropbox
+        File inputFile = new File("Insert a &lt;FILE_ABSOLUTE PATH&gt; here&gt;");
+        FileInputStream inputStream = new FileInputStream(inputFile);
+        try {
+               DbxEntry.File uploadedFile = client.uploadFile("Insert &lt;DROPBOX_FILE_PATH&gt; where you want to upload the file here",
+               DbxWriteMode.add(), inputFile.length(), inputStream);
+            System.out.println("Uploaded: " + uploadedFile.toString());
+        } finally {
+            inputStream.close();
+        }
+
+        //  To list the children (files, sub-folders present in a given folder of Dropbox)
+        DbxEntry.WithChildren listing = client.getMetadataWithChildren("Insert &lt;DROPBOX_PATH&gt; here");
+        System.out.println("Files in the &lt;DROPBOX_PATH&gt; are :");
+        for (DbxEntry child : listing.children) {
+            System.out.println("    " + child.name + ": " + child.toString());
+        }
+
+        //  Download a file from &lt;DROPBOX_FILE_PATH&gt;
+        FileOutputStream outputStream = new FileOutputStream("Insert &lt;LOCAL_PATH&gt; where you want to save the file here");
+        try {
+            DbxEntry.File downloadedFile = client.getFile("Insert &lt;DROPBOX_FILE_PATH&gt; here", null,
+                outputStream);
+            System.out.println("Metadata: " + downloadedFile.toString());
+        } finally {
+            outputStream.close();
+        }
+    }
+}
+</code></pre>
+
+<p><strong>After creating this test project, my next goal was to configure ImageJ with eclipse.</strong></p>
 
 <h3>
-<a name="step-3-----configured-imagej-with-eclipse-and-created-a-plugin-that-could-connect-to-a-users-dropbox-account-week-2" class="anchor" href="#step-3-----configured-imagej-with-eclipse-and-created-a-plugin-that-could-connect-to-a-users-dropbox-account-week-2"><span class="octicon octicon-link"></span></a>Step 3  :   Configured ImageJ with Eclipse and created a plugin that could connect to a user's Dropbox account. (Week 2)</h3>
+<a name="step-3-----configured-imagej-with-eclipse-and-created-a-plugin-that-could-connect-to-a-users-dropbox-account-week-3" class="anchor" href="#step-3-----configured-imagej-with-eclipse-and-created-a-plugin-that-could-connect-to-a-users-dropbox-account-week-3"><span class="octicon octicon-link"></span></a>Step 3  :   Configured ImageJ with Eclipse and created a plugin that could connect to a user's Dropbox account. (Week 3)</h3>
+
+<ol>
+<li><p>Step by Step configured the ImageJ with Eclipse using the <strong>Method 1</strong> of this <a href="http://imagejdocu.tudor.lu/doku.php?id=howto:plugins:the_imagej_eclipse_howto">tutorial</a>.</p></li>
+<li><p>Created a sample plugin that could connect to a user's dropbox account.</p></li>
+</ol><p><strong>Note:</strong> This plugin was running quite well in Eclipse on my computer. But, when I sent the JAR file to my mentor. He was not able to run it. After a lot of analysis, I found that I have not zipped the Dropbox SDK within the JAR file. After, I corrected this problem, my mentor was able to run this plugin on his computer. <strong>The plugin could be deployed now.</strong> The next step was to add the upload/download functionalities into the plugin.</p>
 
 <h3>
-<a name="step-4-----added-the-downloadupload-functionality-in-the-imagej-plugin-week-3-4" class="anchor" href="#step-4-----added-the-downloadupload-functionality-in-the-imagej-plugin-week-3-4"><span class="octicon octicon-link"></span></a>Step 4  :   Added the download/upload functionality in the ImageJ plugin. (Week 3, 4)</h3>
+<a name="step-4-----added-the-downloadupload-functionality-in-the-imagej-plugin-week-4" class="anchor" href="#step-4-----added-the-downloadupload-functionality-in-the-imagej-plugin-week-4"><span class="octicon octicon-link"></span></a>Step 4  :   Added the download/upload functionality in the ImageJ plugin. (Week 4)</h3>
+
+<p>As I had already created the test code for download/upload. I created separate functions for download/upload-ing  a file in <strong>class DbxUtils.DbxUtility</strong>. These functions are as follows:</p>
+
+<pre><code>     /* Function to download a "File" from Dropbox given the complete path of the file in 
+        Dropbox and also local machine path where the "File" has to be saved.
+     */
+    public void DbxDownloadFile(String FileDbxPath, String TargetLocalPath) throws IOException, DbxException
+    {
+        String fileName = FileDbxPath.substring(FileDbxPath.lastIndexOf("/"));
+        TargetLocalPath += fileName;
+        File SaveAsFile = new File(TargetLocalPath);
+        OutputStream outputStream = new FileOutputStream(SaveAsFile);
+        try {
+        @SuppressWarnings("unused")
+        DbxEntry.File downloadedFile = client.getFile(FileDbxPath, null, outputStream);
+        } finally {
+            outputStream.close();
+        }
+    }
+
+
+
+     /* Function to upload a "File" to Dropbox given the complete path of the file in local machine and the 
+      * Dropbox folder's path where "File" has to be saved.   
+      */
+    public void DbxUploadFile(String FileLocalPath, String TargetDbxPath) throws IOException, DbxException 
+    {
+        File inputFile = new File(FileLocalPath);
+        InputStream inputStream = new FileInputStream(inputFile);
+        try {
+            if(!inputFile.isHidden()) {
+                @SuppressWarnings("unused")
+                DbxEntry.File uploadedFile = client.uploadFile(TargetDbxPath, DbxWriteMode.add(), inputFile.length(), inputStream);
+            }
+            } finally {
+                inputStream.close();
+            }
+    }
+</code></pre>
+
+<p>Added a simple GUI for testing these functions. The user had to manually enter source address and target address in the text fields. In the next few weeks, I added the browse feature in the plugin.</p>
 
 <h3>
 <a name="step-5-----improved-the-graphical-user-interface-of-the-plugin-week-5-6" class="anchor" href="#step-5-----improved-the-graphical-user-interface-of-the-plugin-week-5-6"><span class="octicon octicon-link"></span></a>Step 5  :   Improved the Graphical User Interface of the plugin. (Week 5, 6)</h3>
 
-<h4>
-<a name="midterm-evaluation" class="anchor" href="#midterm-evaluation"><span class="octicon octicon-link"></span></a>Midterm Evaluation</h4>
+<p>In these week, I worked on improving the GUI for plugin. I set the JFrame to a proper size. I added <strong>instructions</strong> text for new user's help. I improved the layout of the plugin. I also added the menu options for Download and Upload. Also, added the <strong>download/upload folder option</strong>. </p>
+
+<ol>
+<li><p><strong>Folders are downloaded by iteratively calling DbxDownloadFile() function for each file in the folder</strong>.</p></li>
+<li><p><strong>Folders are uploaded by iteratively calling DbxUploadFile() function for each file in the folder</strong>.</p></li>
+</ol><h2>
+<a name="midterm-evaluation" class="anchor" href="#midterm-evaluation"><span class="octicon octicon-link"></span></a>Midterm Evaluation</h2>
+
+<p>Before Midterm evaluation, I was able to create a plugin with a simple GUI which could download/upload a file/folder from a user's dropbox account. After midterm, I worked to enable the following feature: </p>
+
+<p><strong>Browsing the Dropbox site remotely to add the source/target path for download/upload</strong>.</p>
 
 <h3>
 <a name="step-6-----added-jtree-for-browsing-dropbox-folders-remotely-week-8-9" class="anchor" href="#step-6-----added-jtree-for-browsing-dropbox-folders-remotely-week-8-9"><span class="octicon octicon-link"></span></a>Step 6  :   Added JTree for browsing Dropbox folders remotely. (Week 8, 9)</h3>
 
+<p>Adding the browsing feature in this plugin was quite a challenge. I had to download the metadata from dropbox site and then display it to user <strong>(using a JTree)</strong>.</p>
+
+<p>I tried following methods to do the same:</p>
+
+<ol>
+<li>
+<p>After connecting to the user's Dropbox account, I called <code>getMetaDataWithChildren(PATHNAME)</code> recursively for complete dropbox account and added each folder/file to a node in JTree (Similar to a Directory Structure). </p>
+
+<p><strong>But this took a lot of time. This was not feasible for our application. So, I solved this problem as follows:</strong></p>
+</li>
+<li><p>So, I downloaded metadata of only the top-level folders in the Dropbox Hierarchy and added those as JTree nodes. I only downloaded metadata of the folders which users wanted to <strong>Expand</strong>. This gave us with a run-time solution.</p></li>
+</ol><p><strong>Thus, JTree was added for browsing functionality</strong>.</p>
+
 <h3>
 <a name="step-7------changed-the-gui-quite-a-bit-and-added-the-open-the-file-after-uploaddownload-functionality-week-10" class="anchor" href="#step-7------changed-the-gui-quite-a-bit-and-added-the-open-the-file-after-uploaddownload-functionality-week-10"><span class="octicon octicon-link"></span></a>Step 7  :    Changed the GUI quite a bit and added the open the file after upload/download functionality. (Week 10)</h3>
 
-<h3>
-<a name="step-8-----testing-the-code-and-handling-exceptions-wherever-needed-week-11-12" class="anchor" href="#step-8-----testing-the-code-and-handling-exceptions-wherever-needed-week-11-12"><span class="octicon octicon-link"></span></a>Step 8  :   Testing the code and handling exceptions wherever needed. (Week 11, 12)</h3>
+<ol>
+<li><p>In this week, I changed the GUI quite a bit. I used nested JPanels for proper alignment of the individual components(JButton, JTextField etc.) of the GUI. I also removed the menu bar and placed the Download/Upload panel in the right side of the original JFrame. Thus, the complete complete plugin was now has only one JFrame with many JPanels. The GUI looked quite elegant and simple to use.</p></li>
+<li><p>On recommendation of my mentor, I also added the open a file feature. So, I added the code to open the file/folder in OS default application.</p></li>
+</ol><h3>
+<a name="step-8-----testing-the-code-and-handling-exceptions-wherever-needed-week-11" class="anchor" href="#step-8-----testing-the-code-and-handling-exceptions-wherever-needed-week-11"><span class="octicon octicon-link"></span></a>Step 8  :   Testing the code and handling exceptions wherever needed. (Week 11)</h3>
+
+<p>In these weeks, I mainly read the complete code and optimized some parts of the code. I also added exception handling wherever needed. I added various messages for user's help when an error occured. I also ensured that user does not enter wrong inputs in the plugin .</p>
+
+<p><strong>For each exception, There will be a message for the user.</strong></p>
 
 <h3>
-<a name="step-9-----changed-the-open-in-os-default-application-to-imagej-and-created-a-new-thread-for-downloadinguploading-week-13" class="anchor" href="#step-9-----changed-the-open-in-os-default-application-to-imagej-and-created-a-new-thread-for-downloadinguploading-week-13"><span class="octicon octicon-link"></span></a>Step 9  :   Changed the open in OS-Default application to ImageJ and Created a new thread for downloading/uploading. (Week 13)</h3>
+<a name="step-9-----opening-the-file-in-imagej-week-12" class="anchor" href="#step-9-----opening-the-file-in-imagej-week-12"><span class="octicon octicon-link"></span></a>Step 9  :   Opening the file in ImageJ (Week 12)</h3>
+
+<p>Previously, I had added the code for opening the file in OS default application. On my mentor's recommendation, I changed it to ImageJ.</p>
+
+<p><strong>If a file is not supported by the ImageJ, it will show an error message.</strong></p>
+
+<h3>
+<a name="step-10----created-a-new-thread-for-downloadinguploading-week-12" class="anchor" href="#step-10----created-a-new-thread-for-downloadinguploading-week-12"><span class="octicon octicon-link"></span></a>Step 10 :   Created a new thread for downloading/uploading. (Week 12)</h3>
+
+<p>Swing GUI has only a single thread. Thus, during a long process such as download/upload the plugin became unresponsive. On my mentor's advice, I spawned a new thread for download/upload.</p>
+
+<pre><code>Thread thread = new Thread("New Thread") {
+                              public void run(){
+                                    // Call to Upload/Download functions
+                            };
+                        thread.start();
+</code></pre>
+
+<p><strong>After creating a new thread for download/upload, plugin became responsive</strong>.</p>
 
 <h2>
 <a name="how-to-use-this-plugin" class="anchor" href="#how-to-use-this-plugin"><span class="octicon octicon-link"></span></a>How to use this plugin</h2>
 
-<h2>
-<a name="project-directory-structure" class="anchor" href="#project-directory-structure"><span class="octicon octicon-link"></span></a>Project Directory Structure</h2>
+<p><strong>Steps</strong></p>
+
+<ol>
+<li><p>Download this repository to let's say, <strong>/Users/username/Desktop</strong>.</p></li>
+<li><p><strong>/Users/username/Desktop/MyCloudJ/plugins/</strong> contains the <strong>MyCloudJ_.jar</strong>.</p></li>
+<li><p>Put this <strong>MyCLoudJ_.jar</strong> in the <strong>plugins</strong> folder in the <strong>ImageJ</strong> directory.</p></li>
+<li><p>Start <strong>ImageJ</strong>. MyCloudJ_ plugin is visible in the plugins menu of ImageJ.</p></li>
+<li><p>You can start using this plugin right away. </p></li>
+</ol>
         </section>
 
         <aside id="sidebar">
